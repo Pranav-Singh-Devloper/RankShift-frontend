@@ -1,4 +1,3 @@
-// src/components/RatingChart.tsx
 'use client';
 
 import {
@@ -26,8 +25,59 @@ type ChartPoint = {
   date: string;
 };
 
+/* ===================================================== */
+/*   CUSTOM TOOLTIP COMPONENT                           */
+/* ===================================================== */
+
+function CustomTooltip({ active, payload }: TooltipProps<number, string>) {
+  if (!active || !payload || payload.length === 0) {
+    return null;
+  }
+
+  // Safely extract the data from the payload
+  const tooltipData = payload[0]?.payload as ChartPoint;
+
+  if (!tooltipData) return null;
+
+  const changeColor =
+    tooltipData.change > 0
+      ? 'text-green-600'
+      : tooltipData.change < 0
+      ? 'text-red-600'
+      : 'text-slate-600';
+
+  const changePrefix = tooltipData.change > 0 ? '+' : '';
+
+  return (
+    <div className="bg-white border border-slate-200 p-4 rounded-lg shadow-xl text-sm min-w-[160px]">
+      <p className="font-bold text-slate-900 mb-2 border-b pb-1">
+        {tooltipData.name}
+      </p>
+
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-slate-500">Rank:</span>
+        <span className="font-semibold text-slate-800">
+          {tooltipData.rank}
+        </span>
+      </div>
+
+      <div className="flex justify-between items-center">
+        <span className="text-slate-500">Rating Change:</span>
+        <span className={`font-bold ${changeColor}`}>
+          {changePrefix}
+          {tooltipData.change}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ===================================================== */
+/*   MAIN COMPONENT                                     */
+/* ===================================================== */
+
 export default function RatingChart({ data }: RatingChartProps) {
-  const safeData = data || [];
+  const safeData = data ?? [];
 
   if (safeData.length === 0) {
     return (
@@ -52,52 +102,6 @@ export default function RatingChart({ data }: RatingChartProps) {
       date: new Date(entry.contest.date).toLocaleDateString(),
     }));
 
-  /* ---------- Strongly Typed Tooltip ---------- */
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: TooltipProps<number, string>) => {
-    if (active && payload && payload.length) {
-      const tooltipData = payload[0].payload as ChartPoint;
-
-      const isPositive = tooltipData.change > 0;
-      const changeColor =
-        tooltipData.change > 0
-          ? 'text-green-600'
-          : tooltipData.change < 0
-          ? 'text-red-600'
-          : 'text-slate-600';
-
-      const changePrefix = isPositive ? '+' : '';
-
-      return (
-        <div className="bg-white border border-slate-200 p-4 rounded-lg shadow-xl text-sm min-w-[160px]">
-          <p className="font-bold text-slate-900 mb-2 border-b pb-1">
-            {tooltipData.name}
-          </p>
-
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-slate-500">Rank:</span>
-            <span className="font-semibold text-slate-800">
-              {tooltipData.rank}
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <span className="text-slate-500">Rating Change:</span>
-            <span className={`font-bold ${changeColor}`}>
-              {changePrefix}
-              {tooltipData.change}
-            </span>
-          </div>
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  /* ---------- Render Chart ---------- */
   return (
     <div className="h-[350px] w-full mt-6">
       <ResponsiveContainer width="100%" height="100%">
