@@ -40,8 +40,12 @@ export default function AddContestForm({ userId, availableContests }: AddContest
       router.refresh(); 
       setContestId(''); 
       setRank('');
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            alert(error.message);
+        } else {
+            alert("Something went wrong.");
+        }
     } finally {
       setIsSubmitting(false);
     }

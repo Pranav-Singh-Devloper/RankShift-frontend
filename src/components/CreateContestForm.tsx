@@ -33,8 +33,12 @@ export default function CreateContestForm() {
       router.refresh(); // Instantly refreshes the page to update the dropdown list!
       setName(''); 
       setParticipants('');
-    } catch (error: any) {
-      alert(error.message);
+    }  catch (error: unknown) {
+        if (error instanceof Error) {
+            alert(error.message);
+        } else {
+            alert("Something went wrong.");
+        }
     } finally {
       setIsSubmitting(false);
     }
