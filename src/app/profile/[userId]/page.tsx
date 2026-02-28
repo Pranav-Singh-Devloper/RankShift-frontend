@@ -11,14 +11,25 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 // 1. GLOBAL SCOPE: Fetch functions must be outside the component
 async function getProfileData(userId: string): Promise<UserProfile | null> {
+  // LOG 1: Check what URL Vercel is actually using
+  console.log(`FETCHING FROM: ${API_URL}/api/users/${userId}`); 
+
   try {
     const res = await fetch(`${API_URL}/api/users/${userId}`, {
       cache: 'no-store',
     });
-    if (!res.ok) return null;
-    return await res.json();
+    
+    if (!res.ok) {
+      // LOG 2: See if the backend is rejecting the request
+      console.error(`BACKEND ERROR: Status ${res.status}`);
+      return null;
+    }
+    
+    const data = await res.json();
+    return data;
   } catch (error) {
-    console.error("Failed to fetch user profile:", error);
+    // LOG 3: See if there is a network/DNS connection error
+    console.error("NETWORK ERROR:", error);
     return null;
   }
 }
