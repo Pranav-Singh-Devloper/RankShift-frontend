@@ -1,7 +1,6 @@
 // src/app/profile/[userId]/page.tsx
 import { Contest, UserProfile } from '@/lib/types';
 import { getTierColor } from '@/lib/utils';
-import RatingChart from '@/components/RatingChart';
 import { Trophy, TrendingUp, Award, Activity } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import InteractiveHistory from '@/components/InteractiveHistory';
@@ -9,6 +8,8 @@ import AddContestForm from '@/components/AddContestForm';
 import CreateContestForm from '@/components/CreateContestForm';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+// 1. GLOBAL SCOPE: Fetch functions must be outside the component
 async function getProfileData(userId: string): Promise<UserProfile | null> {
   try {
     const res = await fetch(`${API_URL}/api/users/${userId}`, {
@@ -22,15 +23,7 @@ async function getProfileData(userId: string): Promise<UserProfile | null> {
   }
 }
 
-type Props = {
-  params: Promise<{ userId: string }>;
-};
-
-export default async function ProfilePage({ params }: Props) {
-  const resolvedParams = await params;
-  const user = await getProfileData(resolvedParams.userId);
-  const availableContests = await getAllContests();
-  async function getAllContests(): Promise<Contest[]> {
+async function getAllContests(): Promise<Contest[]> {
   try {
     const res = await fetch(`${API_URL}/api/contests`, {
       cache: 'no-store',
@@ -43,6 +36,20 @@ export default async function ProfilePage({ params }: Props) {
   }
 }
 
+type Props = {
+  params: Promise<{ userId: string }>;
+};
+
+export default async function ProfilePage({ params }: Props) {
+  const resolvedParams = await params;
+  
+  // 2. PARALLEL FETCH: Get both datasets
+  const [user, availableContests] = await Promise.all([
+    getProfileData(resolvedParams.userId),
+    getAllContests()
+  ]);
+
+  // 3. VALIDATION: Only trigger 404 if the USER fetch specifically fails
   if (!user) {
     notFound();
   }
@@ -104,6 +111,7 @@ export default async function ProfilePage({ params }: Props) {
           <InteractiveHistory data={user.ratingHistory} />
         </div>
 
+        {/* Action Panels */}
         <div className="grid grid-cols-1 gap-6 mt-6">
           <CreateContestForm />
           <AddContestForm userId={user.id} availableContests={availableContests} />
