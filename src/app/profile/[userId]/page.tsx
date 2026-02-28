@@ -7,7 +7,7 @@ import InteractiveHistory from '@/components/InteractiveHistory';
 import AddContestForm from '@/components/AddContestForm';
 import CreateContestForm from '@/components/CreateContestForm';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const API_URL = 'https://rankshift-contest-rating-engine-1.onrender.com';
 
 // 1. GLOBAL SCOPE: Fetch functions must be outside the component
 async function getProfileData(userId: string): Promise<UserProfile | null> {
