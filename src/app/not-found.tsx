@@ -19,7 +19,7 @@ export default function NotFound() {
           <h1 className="text-5xl font-black text-slate-900 tracking-tight">404</h1>
           <h2 className="text-2xl font-bold text-slate-800">Profile Not Found</h2>
           <p className="text-slate-500 leading-relaxed">
-            The Rating Engine couldn't find a user with this ID. 
+            The Rating Engine couldn not t find a user with this ID. 
             It might have been lost in the database or the URL is malformed.
           </p>
         </div>

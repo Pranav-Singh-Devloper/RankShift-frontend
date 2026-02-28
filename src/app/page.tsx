@@ -16,7 +16,7 @@ export default function Home() {
         </p>
         
         <Link 
-          href={`/profile/${demoUserId}`}
+          href="/profile?id=9db2d431-cee7-43aa-b237-6ca80932bfae"
           className="inline-flex items-center justify-center bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 hover:-translate-y-1 transition-all duration-200"
         >
           View Demo Profile
