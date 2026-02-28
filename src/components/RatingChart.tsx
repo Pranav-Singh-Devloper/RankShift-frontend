@@ -29,13 +29,17 @@ type ChartPoint = {
 /*   CUSTOM TOOLTIP COMPONENT                           */
 /* ===================================================== */
 
-function CustomTooltip({ active, payload }: TooltipProps<number, string>) {
+
+function CustomTooltip({
+  active,
+  payload,
+}: TooltipProps<number, string> & { payload?: { payload: ChartPoint }[] }) {
   if (!active || !payload || payload.length === 0) {
     return null;
   }
 
   // Safely extract the data from the payload
-  const tooltipData = payload[0]?.payload as ChartPoint;
+  const tooltipData = payload[0]?.payload;
 
   if (!tooltipData) return null;
 
