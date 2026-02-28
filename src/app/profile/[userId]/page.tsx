@@ -7,29 +7,33 @@ import InteractiveHistory from '@/components/InteractiveHistory';
 import AddContestForm from '@/components/AddContestForm';
 import CreateContestForm from '@/components/CreateContestForm';
 
-const API_URL = 'https://rankshift-contest-rating-engine-1.onrender.com';
+// 1. HEARTBEAT LOG: This will run as soon as the server loads this module
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+console.log("------------------------------------------");
+console.log("🚀 ROUTE INITIALIZED");
+console.log("📍 CURRENT API_URL CONFIG:", API_URL);
+console.log("------------------------------------------");
 
-// 1. GLOBAL SCOPE: Fetch functions must be outside the component
 async function getProfileData(userId: string): Promise<UserProfile | null> {
-  // LOG 1: Check what URL Vercel is actually using
-  console.log(`FETCHING FROM: ${API_URL}/api/users/${userId}`); 
+  const fetchUrl = `${API_URL}/api/users/${userId}`;
+  console.log("🔍 ATTEMPTING FETCH TO:", fetchUrl);
 
   try {
-    const res = await fetch(`${API_URL}/api/users/${userId}`, {
+    const res = await fetch(fetchUrl, {
       cache: 'no-store',
+      headers: { 'Accept': 'application/json' }
     });
     
     if (!res.ok) {
-      // LOG 2: See if the backend is rejecting the request
-      console.error(`BACKEND ERROR: Status ${res.status}`);
-      return null;
+        console.error(`❌ BACKEND REJECTED: Status ${res.status} for URL ${fetchUrl}`);
+        return null;
     }
     
     const data = await res.json();
+    console.log("✅ DATA RETRIEVED SUCCESSFULLY FOR:", userId);
     return data;
   } catch (error) {
-    // LOG 3: See if there is a network/DNS connection error
-    console.error("NETWORK ERROR:", error);
+    console.error("🔥 CRITICAL NETWORK ERROR:", error);
     return null;
   }
 }
