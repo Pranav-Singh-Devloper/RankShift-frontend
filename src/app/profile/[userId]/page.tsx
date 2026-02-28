@@ -1,5 +1,5 @@
 // src/app/profile/[userId]/page.tsx
-import { UserProfile } from '@/lib/types';
+import { Contest, UserProfile } from '@/lib/types';
 import { getTierColor } from '@/lib/utils';
 import RatingChart from '@/components/RatingChart';
 import { Trophy, TrendingUp, Award, Activity } from 'lucide-react';
